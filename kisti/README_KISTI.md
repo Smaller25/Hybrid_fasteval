@@ -33,20 +33,24 @@ cd /scratch/e1887a03/Hybrid_fasteval
 
 ---
 
-## 🔧 Interactive 세션에서 환경 설정
+## 🔧 디버깅 노드에서 환경 설정 (추천!)
 
-### A100 Interactive 세션 시작
+### 디버깅 노드 접속
+
+**KISTI는 디버깅 전용 노드 제공** - SLURM 대기 없이 바로 사용 가능!
 
 ```bash
-srun -p amd_a100_4 --gres=gpu:1 --cpus-per-task=8 \
-    --time=2:00:00 --comment pytorch --pty bash
+# 로그인 노드에서
+ssh gdebug01  # 또는 gdebug02
+
+# 작업 디렉토리로 이동
+cd /scratch/e1887a03/Hybrid_fasteval
 ```
 
-대기가 너무 길면 V100로 먼저 테스트:
-```bash
-srun -p cas_v100_4 --gres=gpu:1 --cpus-per-task=8 \
-    --time=2:00:00 --comment pytorch --pty bash
-```
+**노드 사양**:
+- CPU: Xeon 2.9GHz (32 Cores)
+- GPU: V100 × 2
+- **용도**: 설치, 컴파일, 테스트 (실제 긴 작업은 제한)
 
 ### 환경 설정 실행
 
