@@ -26,6 +26,9 @@ rsync -av --exclude='*.pyc' --exclude='__pycache__' --exclude='.git' \
 ### 2단계: 데이터 준비 (최초 1회)
 
 ```bash
+# KISTI는 scratch 디렉토리에서만 작업 제출 가능함
+cd /scratch/e1887a03/Hybrid_fasteval
+
 # 데이터 준비 작업 제출
 sbatch slurm/prepare_data.sh
 
