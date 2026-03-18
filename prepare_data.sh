@@ -16,7 +16,7 @@ mkdir -p data/output results logs
 # 1단계: Short conflict 데이터
 echo "[1/2] Generating short conflict data..."
 python project/data/prepare_counterfact.py \
-    --n_records 200 \
+    --n 200 \
     --out data/output/short_conflict.jsonl
 
 # 2단계: Long context 데이터 (500, 2k, 8k, 32k)

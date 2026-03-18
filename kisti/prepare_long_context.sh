@@ -28,7 +28,7 @@ export TRANSFORMERS_CACHE=$WORK_DIR/models_cache
 if [ ! -f "data/output/short_conflict.jsonl" ]; then
     echo "[1/2] Generating short conflict data..."
     python project/data/prepare_counterfact.py \
-        --n_records 200 \
+        --n 200 \
         --out data/output/short_conflict.jsonl
 else
     echo "[1/2] Short conflict data already exists"
