@@ -1,13 +1,12 @@
 #!/bin/bash
 #SBATCH -J download_models
-#SBATCH -p cas_v100_4
+#SBATCH -p cpu
 #SBATCH --nodes=1
 #SBATCH --ntasks-per-node=1
-#SBATCH --cpus-per-task=4
+#SBATCH --cpus-per-task=8
 #SBATCH -o /scratch/e1887a03/Hybrid_fasteval/logs/download_models.o%j
 #SBATCH -e /scratch/e1887a03/Hybrid_fasteval/logs/download_models.e%j
 #SBATCH --time 04:00:00
-#SBATCH --gres=gpu:1
 #SBATCH --comment pytorch
 
 # ============================================================
