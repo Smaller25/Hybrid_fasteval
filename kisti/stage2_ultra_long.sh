@@ -3,7 +3,7 @@
 #SBATCH -p amd_a100_4
 #SBATCH --nodes=1
 #SBATCH --ntasks-per-node=1
-#SBATCH --cpus-per-task=32
+#SBATCH --cpus-per-task=16
 #SBATCH -o /scratch/e1887a03/Hybrid_fasteval/logs/stage2_1m.o%j
 #SBATCH -e /scratch/e1887a03/Hybrid_fasteval/logs/stage2_1m.e%j
 #SBATCH --time 48:00:00
