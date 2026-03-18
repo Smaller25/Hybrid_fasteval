@@ -68,16 +68,8 @@ def score_response(
     if parametric_match and not in_context_match:
         return "parametric"
     if in_context_match and parametric_match:
-        # Whichever appears first in the response (use safe find to avoid ValueError)
-        pos_i = resp.find(li[:4]) if len(li) >= 4 else resp.find(li)
-        pos_p = resp.find(lp[:4]) if len(lp) >= 4 else resp.find(lp)
-        if pos_i == -1 and pos_p == -1:
-            return "other"
-        if pos_i == -1:
-            return "parametric"
-        if pos_p == -1:
-            return "incontext"
-        return "incontext" if pos_i < pos_p else "parametric"
+        # Whichever appears first in the response
+        return "incontext" if resp.index(li[:4]) < resp.index(lp[:4]) else "parametric"
     return "other"
 
 

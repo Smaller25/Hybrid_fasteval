@@ -118,12 +118,9 @@ def run_length_scaling(
 
         all_results[model_name] = model_results
 
-        # Free device memory
+        # Free GPU memory
         del model
-        if torch.cuda.is_available():
-            torch.cuda.empty_cache()
-        elif torch.backends.mps.is_available():
-            torch.mps.empty_cache()
+        torch.cuda.empty_cache() if torch.cuda.is_available() else None
 
     return all_results
 

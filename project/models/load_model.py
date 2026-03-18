@@ -7,20 +7,6 @@ import argparse
 import torch
 from transformers import AutoModelForCausalLM, AutoTokenizer
 
-def _resolve_device_map(device_map: str):
-    """
-    Resolve device_map for the current platform.
-    On Mac M2 (MPS), 'auto' is unreliable — return explicit MPS mapping instead.
-    """
-    if device_map != "auto":
-        return device_map
-    if torch.cuda.is_available():
-        return "auto"
-    if torch.backends.mps.is_available():
-        return {"": "mps"}
-    return {"": "cpu"}
-
-
 MODEL_REGISTRY = {
     "qwen3.5-4b": {
         "hf_id": "Qwen/Qwen3.5-4B",
@@ -124,11 +110,10 @@ def load_model(model_name: str, device_map: str = "auto"):
     if tokenizer.pad_token is None:
         tokenizer.pad_token = tokenizer.eos_token
 
-    resolved_device_map = _resolve_device_map(device_map)
     model = AutoModelForCausalLM.from_pretrained(
         hf_id,
         torch_dtype=cfg["dtype"],
-        device_map=resolved_device_map,
+        device_map=device_map,
         trust_remote_code=cfg["trust_remote_code"],
     )
     model.eval()
