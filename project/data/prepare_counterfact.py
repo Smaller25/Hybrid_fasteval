@@ -51,11 +51,10 @@ def load_counterfact(n: int, seed: int = 42) -> list[dict]:
     for i in tqdm(indices, desc="Building conflict prompts"):
         row = ds[i]
         try:
-            rr = row["requested_rewrite"]
-            subject = rr["subject"]
-            true_obj = row["requested_rewrite"]["target_true"]["str"]
-            false_obj = row["requested_rewrite"]["target_new"]["str"]
-            prompt_base = rr.get("prompt", "{}")
+            # Actual dataset structure has these fields directly
+            subject = row["subject"].strip()
+            true_obj = row["target_true"].strip()
+            false_obj = row["target_false"].strip()
         except (KeyError, TypeError):
             continue
 
