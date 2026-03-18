@@ -34,16 +34,17 @@ else
     echo "[1/2] Short conflict data already exists"
 fi
 
-# 2. Long context 데이터 (기존 + 긴 버전)
+# 2. Long context 데이터 (기존 + 긴 버전 + 초장문)
 echo "[2/2] Generating long context data..."
 
-# 기존: 500, 2k, 8k, 32k
-# 추가: 64k, 128k, 256k
+# 기존: 500, 2k, 8k, 32k (RunPod)
+# 긴 버전: 64k, 128k, 256k (KISTI)
+# 초장문: 512k, 1M (KISTI Ultra-long)
 python project/data/make_long_context.py \
     --conflict_data data/output/short_conflict.jsonl \
-    --lengths 500 2000 8000 32000 64000 128000 256000 \
+    --lengths 500 2000 8000 32000 64000 128000 256000 512000 1000000 \
     --positions beginning middle end \
-    --n_per_condition 50 \
+    --n_per_condition 30 \
     --out_dir data/output/
 
 echo ""
