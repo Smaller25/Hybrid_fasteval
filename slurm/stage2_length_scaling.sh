@@ -4,8 +4,8 @@
 #SBATCH --nodes=1
 #SBATCH --ntasks-per-node=1
 #SBATCH --cpus-per-task=8
-#SBATCH -o logs/stage2_length.o%j
-#SBATCH -e logs/stage2_length.e%j
+#SBATCH -o /scratch/e1887a03/Hybrid_fasteval/logs/stage2_length.o%j
+#SBATCH -e /scratch/e1887a03/Hybrid_fasteval/logs/stage2_length.e%j
 #SBATCH --time 08:00:00
 #SBATCH --gres=gpu:1
 #SBATCH --comment pytorch
@@ -19,7 +19,7 @@
 set -e
 
 # 작업 디렉토리
-WORK_DIR=/scratch/$USER/Hybrid_fasteval
+WORK_DIR=/scratch/e1887a03/Hybrid_fasteval
 cd $WORK_DIR
 
 echo "=========================================="
@@ -31,10 +31,9 @@ echo "GPU: $(nvidia-smi --query-gpu=name --format=csv,noheader | head -1)"
 echo "Start time: $(date)"
 echo ""
 
-# 환경 로드
-module purge
-module load gcc/10.2.0 cuda/11.8 cudnn/8.6.0
-source venv/bin/activate
+# Miniconda 초기화 및 환경 활성화
+source /apps/applications/Miniconda/25.11.1/etc/profile.d/conda.sh
+conda activate hybrid
 
 # 환경변수 설정
 export OMP_NUM_THREADS=$SLURM_CPUS_PER_TASK
