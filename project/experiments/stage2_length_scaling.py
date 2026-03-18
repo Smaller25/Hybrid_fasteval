@@ -45,7 +45,7 @@ def evaluate_one_condition(
     model,
     tokenizer,
     records: list[dict],
-    max_new_tokens: int = 20,
+    max_new_tokens: int = 100,  # Increased for Qwen thinking mode
 ) -> dict:
     """Evaluate a single (length, position) condition."""
     results = []

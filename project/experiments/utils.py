@@ -115,7 +115,7 @@ def generate_answer(
     model,
     tokenizer,
     prompt: str,
-    max_new_tokens: int = 20,
+    max_new_tokens: int = 100,  # Increased for Qwen thinking mode
 ) -> str:
     """Greedy decode up to max_new_tokens, return decoded new tokens only."""
     inputs = tokenizer(prompt, return_tensors="pt").to(next(model.parameters()).device)
@@ -128,7 +128,13 @@ def generate_answer(
             pad_token_id=tokenizer.pad_token_id or tokenizer.eos_token_id,
         )
     new_tokens = out[0, inputs["input_ids"].shape[1]:]
-    return tokenizer.decode(new_tokens, skip_special_tokens=True).strip()
+    response = tokenizer.decode(new_tokens, skip_special_tokens=True).strip()
+
+    # Handle Qwen thinking mode: extract answer after </think> tag
+    if "</think>" in response:
+        response = response.split("</think>", 1)[1].strip()
+
+    return response
 
 
 def verify_parametric_knowledge(
