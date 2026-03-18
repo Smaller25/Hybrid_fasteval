@@ -44,7 +44,7 @@ pip install triton==3.2.0
 # 4. Core Dependencies
 # ============================================================
 echo "[4/6] Installing core dependencies..."
-pip install einops ninja datasets transformers numpy psutil tqdm
+pip install einops ninja datasets transformers numpy psutil tqdm accelerate
 
 # ============================================================
 # 5. Flash-Linear-Attention (제일 마지막!)
