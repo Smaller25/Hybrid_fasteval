@@ -24,9 +24,10 @@ mkdir -p results/lm_eval
 # Standard benchmarks (general capabilities)
 TASKS_STANDARD="hellaswag,ai2_arc,gsm8k,winogrande,truthfulqa_mc2"
 
-# Recall-intensive / Multi-hop reasoning
-# Simple, reliable tasks (no extra dependencies)
-TASKS_RECALL="drop,winogrande"
+# Recall-intensive / Long-context benchmarks
+# LongBench requires: pip install jieba fuzzywuzzy rouge
+# Use batch_size=1 for long contexts to avoid indexing issues
+TASKS_RECALL="drop,longbench_narrativeqa,longbench_qasper"
 
 # Select tasks based on mode
 case $MODE in
@@ -71,11 +72,19 @@ for model_info in "${MODELS[@]}"; do
         MODEL_ARGS="$MODEL_ARGS,trust_remote_code=True"
     fi
 
+    # Determine batch size based on mode
+    # Long-context tasks need batch_size=1 to avoid indexing issues
+    if [ "$MODE" = "recall" ]; then
+        BATCH_SIZE=1
+    else
+        BATCH_SIZE="auto"
+    fi
+
     # Run evaluation
     lm_eval --model hf \
         --model_args "$MODEL_ARGS" \
         --tasks $TASKS \
-        --batch_size auto \
+        --batch_size $BATCH_SIZE \
         --output_path "results/lm_eval/${name}.json" \
         --log_samples
 
