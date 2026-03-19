@@ -22,10 +22,10 @@ mkdir -p results/lm_eval
 
 # Tasks to evaluate
 # Standard benchmarks (general capabilities)
-TASKS_STANDARD="mmlu,hellaswag,arc_challenge,truthfulqa_mc2,gsm8k"
+TASKS_STANDARD="hellaswag,ai2_arc,gsm8k,winogrande,truthfulqa_mc2"
 
-# Recall-intensive / Long-context benchmarks
-TASKS_RECALL="drop,narrativeqa,scrolls_gov_report,scrolls_qmsum"
+# Recall-intensive / Long-context benchmarks (SCROLLS suite)
+TASKS_RECALL="drop,scrolls_narrativeqa,scrolls_govreport,scrolls_qmsum,scrolls_qasper"
 
 # Select tasks based on mode
 case $MODE in
