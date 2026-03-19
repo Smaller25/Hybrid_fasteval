@@ -1,21 +1,50 @@
 #!/bin/bash
 # ============================================================
-# LM Evaluation Harness - Standard Benchmarks
-# Usage: bash run_lm_eval.sh
+# LM Evaluation Harness - Standard + Recall-intensive Benchmarks
+# Usage:
+#   bash run_lm_eval.sh              # Standard + Recall-intensive
+#   bash run_lm_eval.sh standard     # Standard only (faster)
+#   bash run_lm_eval.sh recall       # Recall-intensive only
 # ============================================================
 
 set -e
 
+MODE=${1:-"all"}
+
 echo "==========================================="
 echo "  LM Evaluation Harness"
 echo "==========================================="
+echo "Mode: $MODE"
 echo ""
 
 # Results directory
 mkdir -p results/lm_eval
 
 # Tasks to evaluate
-TASKS="mmlu,hellaswag,arc_challenge,truthfulqa_mc2,gsm8k"
+# Standard benchmarks (general capabilities)
+TASKS_STANDARD="mmlu,hellaswag,arc_challenge,truthfulqa_mc2,gsm8k"
+
+# Recall-intensive / Long-context benchmarks
+TASKS_RECALL="drop,narrativeqa,scrolls_gov_report,scrolls_qmsum"
+
+# Select tasks based on mode
+case $MODE in
+    "standard")
+        TASKS=$TASKS_STANDARD
+        echo "Tasks: Standard benchmarks only"
+        ;;
+    "recall")
+        TASKS=$TASKS_RECALL
+        echo "Tasks: Recall-intensive benchmarks only"
+        ;;
+    "all"|*)
+        TASKS="$TASKS_STANDARD,$TASKS_RECALL"
+        echo "Tasks: Standard + Recall-intensive"
+        ;;
+esac
+
+echo "Benchmarks: $TASKS"
+echo ""
 
 # Models to evaluate
 MODELS=(
