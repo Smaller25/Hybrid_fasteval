@@ -110,12 +110,26 @@ def load_model(model_name: str, device_map: str = "auto"):
     if tokenizer.pad_token is None:
         tokenizer.pad_token = tokenizer.eos_token
 
-    model = AutoModelForCausalLM.from_pretrained(
-        hf_id,
-        torch_dtype=cfg["dtype"],
-        device_map=device_map,
-        trust_remote_code=cfg["trust_remote_code"],
-    )
+    # Try to use Flash Attention 2 for memory efficiency (critical for long contexts)
+    # Falls back to default if not available
+    try:
+        model = AutoModelForCausalLM.from_pretrained(
+            hf_id,
+            torch_dtype=cfg["dtype"],
+            device_map=device_map,
+            trust_remote_code=cfg["trust_remote_code"],
+            attn_implementation="flash_attention_2",
+        )
+        print(f"[load_model] ✓ Using Flash Attention 2")
+    except Exception as e:
+        print(f"[load_model] ⚠️  Flash Attention 2 not available ({e})")
+        print(f"[load_model] Using default attention (higher memory usage)")
+        model = AutoModelForCausalLM.from_pretrained(
+            hf_id,
+            torch_dtype=cfg["dtype"],
+            device_map=device_map,
+            trust_remote_code=cfg["trust_remote_code"],
+        )
     model.eval()
 
     print(f"[load_model] Loaded. Parameters: {sum(p.numel() for p in model.parameters()) / 1e9:.2f}B")
