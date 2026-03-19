@@ -43,7 +43,9 @@ for model_info in "${MODELS[@]}"; do
     echo ""
 
     # Build model args
-    MODEL_ARGS="pretrained=$hf_id,dtype=bfloat16"
+    # Force max_batch_size=1 to prevent auto-detection in generate_until
+    # (RULER uses very long contexts that can exceed 32-bit indexing)
+    MODEL_ARGS="pretrained=$hf_id,dtype=bfloat16,max_batch_size=1"
     if [ "$trust_code" = "true" ]; then
         MODEL_ARGS="$MODEL_ARGS,trust_remote_code=True"
     fi

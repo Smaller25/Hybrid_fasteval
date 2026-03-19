@@ -73,9 +73,12 @@ for model_info in "${MODELS[@]}"; do
     fi
 
     # Determine batch size based on mode
-    # Long-context tasks need batch_size=1 to avoid indexing issues
+    # Long-context tasks need batch_size=1 to avoid 32-bit indexing issues
     if [ "$MODE" = "recall" ]; then
         BATCH_SIZE=1
+        # Force max_batch_size in model_args to prevent auto-detection in generate_until
+        # GitHub Issue: https://github.com/EleutherAI/lm-evaluation-harness/issues/3252
+        MODEL_ARGS="$MODEL_ARGS,max_batch_size=1"
     else
         BATCH_SIZE="auto"
     fi
