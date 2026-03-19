@@ -1,6 +1,6 @@
 #!/bin/bash
 # ============================================================
-# RunPod Ultra-Long Context Experiment (64K-1M)
+# RunPod Long Context Experiment (64K-128K, 선택적 256K)
 # 메모리 최적화 + 개별 길이 저장
 # Usage: bash run_stage2_ultra_long.sh [model_name] [n_per_condition]
 # ============================================================
@@ -11,7 +11,7 @@ MODEL=${1:-"qwen3.5-4b"}
 N_PER_CONDITION=${2:-30}
 
 echo "==========================================="
-echo "  Ultra-Long Context Experiment (RunPod)"
+echo "  Long Context Experiment (RunPod)"
 echo "==========================================="
 echo "Model: $MODEL"
 echo "Samples per condition: $N_PER_CONDITION"
@@ -27,8 +27,11 @@ export TRANSFORMERS_CACHE=~/models_cache
 # 결과 디렉토리 생성
 mkdir -p results logs
 
-# Ultra-long context 실험 (64k, 128k, 256k, 512k, 1m)
-LENGTHS=("64k" "128k" "256k" "512k" "1m")
+# 현실적 범위: 64K, 128K (256K는 A100 80GB에서 Qwen만 선택적)
+# 512K, 1M 제외 이유:
+#   - Qwen native max: 262K (YaRN extrapolation은 공식 지원 밖)
+#   - VRAM: 512K ≈ 90GB+, 1M ≈ 170GB+ (불가능)
+LENGTHS=("64k" "128k")
 
 for length in "${LENGTHS[@]}"; do
     echo ""

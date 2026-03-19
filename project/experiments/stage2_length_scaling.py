@@ -64,6 +64,10 @@ def evaluate_one_condition(
             "logit_gap": lg["logit_gap"],
         })
 
+        # Clear GPU cache after each sample to prevent memory fragmentation
+        if torch.cuda.is_available():
+            torch.cuda.empty_cache()
+
     counter = Counter(r["verdict"] for r in results)
     n = counter["incontext"] + counter["parametric"]
     cfr = counter["incontext"] / n if n > 0 else float("nan")

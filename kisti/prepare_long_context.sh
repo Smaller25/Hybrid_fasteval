@@ -34,15 +34,19 @@ else
     echo "[1/2] Short conflict data already exists"
 fi
 
-# 2. Long context 데이터 (기존 + 긴 버전 + 초장문)
+# 2. Long context 데이터 (현실적 범위)
 echo "[2/2] Generating long context data..."
 
-# 기존: 500, 2k, 8k, 32k (RunPod)
-# 긴 버전: 64k, 128k, 256k (KISTI)
-# 초장문: 512k, 1M (KISTI Ultra-long)
+# 실용적 범위:
+#   - Qwen3.5-4B: 500 → 64K → 128K (최대)
+#   - OLMo: 500 → 64K (최대)
+#   - 256K는 A100 80GB에서 Qwen만 선택적 추가
+# 512K, 1M 제외 이유:
+#   - Qwen native max: 262K (YaRN extrapolation은 공식 지원 밖)
+#   - VRAM 한계: 512K ≈ 90GB+, 1M ≈ 170GB+
 python project/data/make_long_context.py \
     --conflict_data data/output/short_conflict.jsonl \
-    --lengths 500 2000 8000 32000 64000 128000 256000 512000 1000000 \
+    --lengths 500 2000 8000 32000 64000 128000 256000 \
     --positions beginning middle end \
     --n_per_condition 30 \
     --out_dir data/output/

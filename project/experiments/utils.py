@@ -126,6 +126,7 @@ def generate_answer(
             do_sample=False,
             temperature=1.0,
             pad_token_id=tokenizer.pad_token_id or tokenizer.eos_token_id,
+            use_cache=True,  # KV cache for generation (needed for efficiency)
         )
     new_tokens = out[0, inputs["input_ids"].shape[1]:]
     response = tokenizer.decode(new_tokens, skip_special_tokens=True).strip()

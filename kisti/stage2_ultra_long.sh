@@ -1,19 +1,19 @@
 #!/bin/bash
-#SBATCH -J stage2_1m
-#SBATCH -p amd_a100_4
+#SBATCH -J stage2_256k
+#SBATCH -p amd_a100nv_8
 #SBATCH --nodes=1
 #SBATCH --ntasks-per-node=1
 #SBATCH --cpus-per-task=16
-#SBATCH -o /scratch/e1887a03/Hybrid_fasteval/logs/stage2_1m.o%j
-#SBATCH -e /scratch/e1887a03/Hybrid_fasteval/logs/stage2_1m.e%j
-#SBATCH --time 48:00:00
+#SBATCH -o /scratch/e1887a03/Hybrid_fasteval/logs/stage2_256k.o%j
+#SBATCH -e /scratch/e1887a03/Hybrid_fasteval/logs/stage2_256k.e%j
+#SBATCH --time 24:00:00
 #SBATCH --gres=gpu:1
 #SBATCH --comment pytorch
 
 # ============================================================
-# KISTI Ultra-Long Context Experiment (512K, 1M)
-# 메모리 최적화 + 개별 길이 저장
-# Usage: sbatch kisti/stage2_ultra_long.sh [model_name]
+# KISTI 256K Context Experiment (A100 80GB required)
+# Qwen3.5-4B only - experimental range
+# Usage: sbatch kisti/stage2_ultra_long.sh qwen3.5-4b
 # ============================================================
 
 set -e
@@ -22,7 +22,7 @@ WORK_DIR=/scratch/e1887a03/Hybrid_fasteval
 cd $WORK_DIR
 
 echo "=========================================="
-echo "  Stage 2: Ultra-Long Context (1M tokens)"
+echo "  Stage 2: 256K Context (Experimental)"
 echo "=========================================="
 echo "Job ID: $SLURM_JOB_ID"
 echo "Node: $SLURM_NODELIST"
@@ -47,31 +47,30 @@ export TRANSFORMERS_CACHE=$WORK_DIR/models_cache
 export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True,max_split_size_mb:512
 export PYTORCH_NO_CUDA_MEMORY_CACHING=0
 
-# 모델 선택
+# 모델 선택 (Qwen3.5-4B만 권장)
 MODEL_NAME=${1:-"qwen3.5-4b"}
 
 echo "Model: $MODEL_NAME"
 echo "GPU Memory: $(nvidia-smi --query-gpu=memory.total --format=csv,noheader | head -1)"
 echo ""
+echo "⚠️  256K is experimental (Qwen3.5-4B only)"
+echo "   Requires A100 80GB, ~45-55GB VRAM"
+echo ""
 
-# Ultra-long context 실험 (512K, 1M)
-LENGTHS=("512k" "1m")
+# 256K 실험 (선택적)
+# 512K, 1M 제외 이유:
+#   - Qwen native max: 262K (YaRN extrapolation은 공식 지원 밖)
+#   - VRAM: 512K ≈ 90GB+, 1M ≈ 170GB+ (불가능)
+LENGTHS=("256k")
 
 for length in "${LENGTHS[@]}"; do
     echo ""
     echo "==========================================="
-    echo "  Running Ultra-Long: $length"
+    echo "  Running Experimental Length: $length"
     echo "==========================================="
 
     OUTPUT_FILE="results/stage2_${MODEL_NAME}_${length}_kisti.json"
     LOG_FILE="logs/stage2_${MODEL_NAME}_${length}.log"
-
-    # Length tag를 숫자로 변환
-    if [ "$length" = "512k" ]; then
-        LENGTH_NUM=512000
-    elif [ "$length" = "1m" ]; then
-        LENGTH_NUM=1000000
-    fi
 
     # GPU 메모리 확인
     echo "Before experiment:"
@@ -111,7 +110,7 @@ done
 
 echo ""
 echo "=========================================="
-echo "  Ultra-Long Context Experiment Complete!"
+echo "  256K Context Experiment Complete!"
 echo "=========================================="
-echo "Results: results/stage2_${MODEL_NAME}_*_kisti.json"
+echo "Results: results/stage2_${MODEL_NAME}_256k_kisti.json"
 echo "End time: $(date)"

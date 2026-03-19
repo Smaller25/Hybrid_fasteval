@@ -11,7 +11,8 @@
 #SBATCH --comment pytorch
 
 # ============================================================
-# KISTI Long Context Experiment (64K, 128K, 256K)
+# KISTI Long Context Experiment (64K, 128K)
+# 256K는 별도 스크립트로 분리 (A100 80GB 필요)
 # Usage: sbatch kisti/stage2_long_context.sh [model_name]
 # ============================================================
 
@@ -64,8 +65,9 @@ echo "=========================================="
 echo "  Running Long Context Lengths"
 echo "=========================================="
 
-# 긴 context만 실행 (64K, 128K, 256K, 512K, 1M)
-LENGTHS=("64k" "128k" "256k" "512k" "1m")
+# 현실적 범위: 64K, 128K
+# 512K, 1M 제외: Qwen native max 262K, VRAM 한계
+LENGTHS=("64k" "128k")
 
 for length in "${LENGTHS[@]}"; do
     echo ""
@@ -74,18 +76,7 @@ for length in "${LENGTHS[@]}"; do
     OUTPUT_FILE="results/stage2_${MODEL_NAME}_${length}_kisti.json"
     LOG_FILE="logs/stage2_${MODEL_NAME}_${length}.log"
 
-    # Length tag를 숫자로 변환
-    if [ "$length" = "64k" ]; then
-        LENGTH_NUM=64000
-    elif [ "$length" = "128k" ]; then
-        LENGTH_NUM=128000
-    elif [ "$length" = "256k" ]; then
-        LENGTH_NUM=256000
-    elif [ "$length" = "512k" ]; then
-        LENGTH_NUM=512000
-    elif [ "$length" = "1m" ]; then
-        LENGTH_NUM=1000000
-    fi
+    # Length tag (passed as-is to match data filenames)
 
     python -u project/experiments/stage2_length_scaling.py \
         --models "$MODEL_NAME" \
