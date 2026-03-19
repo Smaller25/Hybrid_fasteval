@@ -90,7 +90,7 @@ for length in "${LENGTHS[@]}"; do
     python -u project/experiments/stage2_length_scaling.py \
         --models "$MODEL_NAME" \
         --data_dir data/output/ \
-        --lengths $LENGTH_NUM \
+        --lengths $length \
         --out "$OUTPUT_FILE" \
         --n_per_condition 50 \
         2>&1 | tee "$LOG_FILE"
