@@ -49,6 +49,8 @@ def evaluate_one_condition(
 ) -> dict:
     """Evaluate a single (length, position) condition."""
     results = []
+    other_samples = []  # Store "other" responses for manual inspection
+
     for rec in records:
         prompt = rec["prompt"]
         lp = rec["label_parametric"]
@@ -58,11 +60,24 @@ def evaluate_one_condition(
         verdict = score_response(resp, lp, li)
         lg = compute_logit_gap(model, tokenizer, prompt, lp, li)
 
-        results.append({
+        result_entry = {
             "id": rec.get("id", ""),
             "verdict": verdict,
             "logit_gap": lg["logit_gap"],
-        })
+        }
+
+        # Store full details for "other" verdicts to enable manual reclassification
+        if verdict == "other":
+            other_samples.append({
+                "id": rec.get("id", ""),
+                "response": resp,
+                "label_parametric": lp,
+                "label_incontext": li,
+                "subject": rec.get("subject", ""),
+                "logit_gap": lg["logit_gap"],
+            })
+
+        results.append(result_entry)
 
         # Clear GPU cache after each sample to prevent memory fragmentation
         if torch.cuda.is_available():
@@ -80,6 +95,7 @@ def evaluate_one_condition(
         "context_following_rate": cfr,
         "avg_logit_gap": avg_gap,
         "verdict_counts": dict(counter),
+        "other_samples": other_samples,  # Include for manual inspection
     }
 
 
