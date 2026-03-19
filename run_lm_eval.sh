@@ -24,9 +24,9 @@ mkdir -p results/lm_eval
 # Standard benchmarks (general capabilities)
 TASKS_STANDARD="hellaswag,ai2_arc,gsm8k,winogrande,truthfulqa_mc2"
 
-# Recall-intensive / Long-context benchmarks
-# Using LongBench instead of SCROLLS (SCROLLS has dataset script compatibility issues)
-TASKS_RECALL="drop,longbench_narrativeqa,longbench_qasper"
+# Recall-intensive / Multi-hop reasoning
+# Simple, reliable tasks (no extra dependencies)
+TASKS_RECALL="drop,winogrande"
 
 # Select tasks based on mode
 case $MODE in
