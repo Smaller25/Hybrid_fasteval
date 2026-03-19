@@ -51,18 +51,25 @@ MODEL_REGISTRY = {
         "notes": "8B scale",
     },
     "olmo-hybrid-7b": {
-        "hf_id": "allenai/OLMo-Hybrid-7B",
+        "hf_id": "allenai/Olmo-Hybrid-7B",
         "trust_remote_code": True,
         "dtype": torch.bfloat16,
         "arch_type": "hybrid_gdn",
-        "notes": "Paired with OLMo-3-7B for controlled comparison",
+        "notes": "Paired with OLMo-3 for controlled comparison",
     },
     "olmo-3-7b": {
-        "hf_id": "allenai/OLMo-3-7B",
+        "hf_id": "allenai/Olmo-3-1025-7B",
         "trust_remote_code": False,
         "dtype": torch.bfloat16,
         "arch_type": "transformer",
         "notes": "Controlled TF baseline, same data as OLMo Hybrid",
+    },
+    "olmo-3-7b-instruct": {
+        "hf_id": "allenai/Olmo-3-1025-7B-Instruct",
+        "trust_remote_code": False,
+        "dtype": torch.bfloat16,
+        "arch_type": "transformer",
+        "notes": "Instruct-tuned version (may follow context better)",
     },
     "llama-3.2-3b": {
         "hf_id": "meta-llama/Llama-3.2-3B",

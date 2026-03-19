@@ -49,16 +49,23 @@ def evaluate_one_condition(
 ) -> dict:
     """Evaluate a single (length, position) condition."""
     results = []
-    other_samples = []  # Store "other" responses for manual inspection
+    all_responses = []  # Store ALL responses for manual inspection
 
     for rec in records:
         prompt = rec["prompt"]
+        prompt_no_context = rec.get("prompt_no_context", "")
         lp = rec["label_parametric"]
         li = rec["label_incontext"]
 
+        # Generate with context
         resp = generate_answer(model, tokenizer, prompt, max_new_tokens)
         verdict = score_response(resp, lp, li)
         lg = compute_logit_gap(model, tokenizer, prompt, lp, li)
+
+        # Generate without context (pure parametric baseline)
+        resp_no_context = ""
+        if prompt_no_context:
+            resp_no_context = generate_answer(model, tokenizer, prompt_no_context, max_new_tokens)
 
         result_entry = {
             "id": rec.get("id", ""),
@@ -66,16 +73,17 @@ def evaluate_one_condition(
             "logit_gap": lg["logit_gap"],
         }
 
-        # Store full details for "other" verdicts to enable manual reclassification
-        if verdict == "other":
-            other_samples.append({
-                "id": rec.get("id", ""),
-                "response": resp,
-                "label_parametric": lp,
-                "label_incontext": li,
-                "subject": rec.get("subject", ""),
-                "logit_gap": lg["logit_gap"],
-            })
+        # Store EVERY sample with full details for post-hoc analysis
+        all_responses.append({
+            "id": rec.get("id", ""),
+            "subject": rec.get("subject", ""),
+            "label_parametric": lp,
+            "label_incontext": li,
+            "verdict": verdict,
+            "response_with_context": resp,
+            "response_no_context": resp_no_context,
+            "logit_gap": lg["logit_gap"],
+        })
 
         results.append(result_entry)
 
@@ -95,7 +103,7 @@ def evaluate_one_condition(
         "context_following_rate": cfr,
         "avg_logit_gap": avg_gap,
         "verdict_counts": dict(counter),
-        "other_samples": other_samples,  # Include for manual inspection
+        "all_responses": all_responses,  # ALL samples for post-hoc analysis
     }
 
 
