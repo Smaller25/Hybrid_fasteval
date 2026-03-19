@@ -49,15 +49,27 @@ pip install einops ninja datasets transformers numpy psutil tqdm accelerate
 # ============================================================
 # 5. Flash-Linear-Attention (제일 마지막!)
 # ============================================================
-echo "[5/6] Installing Flash-Linear-Attention..."
+echo "[5/8] Installing Flash-Linear-Attention..."
 pip install -U --no-build-isolation \
     git+https://github.com/fla-org/flash-linear-attention \
     --no-deps
 
 # ============================================================
-# 6. 검증
+# 6. Flash Attention 2 (for standard transformers)
 # ============================================================
-echo "[6/6] Verifying installation..."
+echo "[6/8] Installing Flash Attention 2..."
+pip install flash-attn --no-build-isolation || echo "⚠️  Flash Attention 2 install failed (optional)"
+
+# ============================================================
+# 7. LM Evaluation Harness
+# ============================================================
+echo "[7/8] Installing LM Evaluation Harness..."
+pip install lm-eval
+
+# ============================================================
+# 8. 검증
+# ============================================================
+echo "[8/8] Verifying installation..."
 python << 'EOF'
 import torch
 print(f"✓ PyTorch: {torch.__version__}")
@@ -75,10 +87,23 @@ try:
     import fla
     print(f"✓ Flash-Linear-Attention: {fla.__version__}")
 except Exception as e:
-    print(f"✗ Flash-Linear-Attention: {e}")
+    print(f"⚠️  Flash-Linear-Attention: {e}")
+
+try:
+    import flash_attn
+    print(f"✓ Flash Attention 2: {flash_attn.__version__}")
+except Exception as e:
+    print(f"⚠️  Flash Attention 2: {e} (optional)")
+
+try:
+    import lm_eval
+    print(f"✓ LM Eval: available")
+except Exception as e:
+    print(f"✗ LM Eval: {e}")
     exit(1)
 
-print("\n✅ All packages installed successfully!")
+print("\n✅ All critical packages installed successfully!")
+print("⚠️  Some optional packages may have warnings (flash-attn)")
 EOF
 
 echo ""

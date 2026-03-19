@@ -1,0 +1,42 @@
+# ============================================================
+# Hybrid_fasteval Dependencies
+# Python 3.11+ required
+# ============================================================
+
+# PyTorch (use nightly for best compatibility)
+# Install via: pip install --pre torch --index-url https://download.pytorch.org/whl/nightly/cu124
+# torch>=2.5.0
+# torchvision (install with --no-deps)
+# torchaudio (install with --no-deps)
+
+# Triton (for kernel optimization)
+triton==3.2.0
+
+# Transformers & Core ML
+transformers>=4.45.0
+accelerate>=0.34.0
+datasets>=2.14.0
+
+# Utilities
+einops>=0.8.0
+numpy>=1.24.0
+psutil>=5.9.0
+tqdm>=4.66.0
+
+# Flash Linear Attention (install from git)
+# Install via: pip install -U --no-build-isolation git+https://github.com/fla-org/flash-linear-attention --no-deps
+# flash-linear-attention
+
+# Flash Attention 2 (optional, for standard transformers)
+# Install via: pip install flash-attn --no-build-isolation
+# flash-attn>=2.0.0
+
+# LM Evaluation Harness
+lm-eval>=0.4.0
+
+# Development (optional)
+jupyter>=1.0.0
+ipython>=8.12.0
+
+# Note: See setup_environment.sh for complete installation order
+# Flash Linear Attention and Flash Attention 2 have specific installation requirements
